@@ -1,0 +1,66 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+    <script src="https://code.jquery.com/jquery-latest.min.js" type="text/javascript"></script>
+    <script type="text/javascript">
+        function callApi() {
+            //var params = { id: 1, jsonrpc: "2.0", method: "GetOilPriceTrend", params: { startDateISO8601: "2020-01-01", endDateISO8601: "2020-01-05" } };
+            var idValue = document.getElementById("idField").value;
+            var methodValue = document.getElementById("methodField").value;
+            var paramsValue = document.getElementById("paramsField").value;
+            $.ajax({
+                type: 'post',
+                url: 'http://127.0.0.1:8080/',
+                //data: '{"id": 1, "jsonrpc": "2.0", "method": "GetOilPriceTrend", "params": {"startDateISO8601": "1987-05-20", "endDateISO8601": "1987-05-22"}}',
+                //data: params,
+                data: '{"id": '.concat(idValue, ', "jsonrpc": "2.0", "method": "', methodValue, '", "params": ', paramsValue, '}'),
+                dataType: 'jsonp',
+                contentType: 'application/json',
+                success: function (data) {
+                    var names = data;
+                    $('#result').html(data);
+                }
+            });
+        }
+        function formSubmit() {
+            var r_url = 'http://127.0.0.1:8080/';
+            var idValue = document.getElementById("idField").value;
+            var methodValue = document.getElementById("methodField").value;
+            var paramsValue = document.getElementById("paramsField").value;
+            var r_txt = '{"id": '.concat(idValue, ', "jsonrpc": "2.0", "method": "', methodValue, '", "params": ', paramsValue, '}');
+
+            var http = new XMLHttpRequest();
+            http.open("POST", r_url, true);
+            http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+            http.setRequestHeader("Content-length", r_txt.length);
+            http.setRequestHeader("Connection", "close");
+            http.onreadystatechange = function () {
+                if (http.readyState == 4) {
+                    if (http.status == 200) {
+                        alert(http.responseText);
+                    }
+                }
+            }
+            http.send(r_txt);
+        }
+    </script>
+    <style>
+        input {
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <form id="frm_details" method="post" name="frm_details">
+        <table width="700px">
+            <tr><td>id</td><td style="width: 600px"><input type="text" id="idField" value="1"></td></tr>
+            <tr><td>method</td><td><input type="text" id="methodField" value="GetOilPriceTrend"></td></tr>
+            <tr><td>params</td><td><input type="text" id="paramsField" value='{"startDateISO8601": "1987-05-20", "endDateISO8601": "1987-05-22"}'></td></tr>
+        </table>
+        <button onclick="formSubmit();return false;">Callback</button>
+    </form>
+</body>
+</html>
